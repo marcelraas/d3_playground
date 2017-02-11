@@ -1,0 +1,8 @@
+
+bin/activate
+
+bin/conda
+
+bin/deactivate
+
+conda-meta/history
