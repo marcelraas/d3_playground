@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.chart rect {
+  fill: steelblue;
+}
+
+.chart text {
+  fill: black;
+  font: 20px sans-serif;
+  text-anchor: middle;
+}
+
+.axis {
+	stroke-width: 2;
+	font-size: 20;
+}
+
+</style>
+
+<svg class="chart"></svg>
+
+<script src="d3-v4/d3.js"></script>
+<script src="https://d3js.org/d3-random.v1.min.js"></script>
+<script src="jquery-3.1.1.js"></script>
+
+<script>
+
+function scatterXY(data, width, height) {
+
+var margin = {top: 20, right: 30, bottom: 30, left: 60},
+    width = width - margin.left - margin.right,
+    height = height - margin.top - margin.bottom;	
+
+var chart = d3.select(".chart")
+	.attr("width", width + margin.left + margin.right)
+	.attr("height", height + margin.top + margin.bottom)
+
+chart = chart.append('g')
+	.attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
+
+var x = d3.scaleLinear()
+	.range([0, width])
+	.domain([d3.min(data, function(d){ return d.x; }),
+			 d3.max(data, function(d){ return d.x; })])
+
+var y = d3.scaleLinear()
+	.range([height, 0])
+	.domain([d3.min(data, function(d){ return d.y; }), 
+		     d3.max(data, function(d){ return d.y; })])
+
+var circles = chart.selectAll("g")
+	  .data(data)
+	.enter().append("g")
+	  .attr("transform", function(d) { return "translate(" + x(d.x) + ", " + y(d.y) + ")"; } )
+
+circles.append("circle")
+	.attr("r", "2")
+
+var xAxis = d3.axisBottom()
+	.scale(x)
+
+var yAxis = d3.axisLeft()
+	.scale(y)
+
+chart.append("g")
+	.attr("class", "x axis")
+	.attr("transform", "translate(0," + height + ")")
+	.call(xAxis);
+
+chart.append("g")
+	.attr("class", "y axis")
+	.attr("transform", "translate(0, 0)")
+	.call(yAxis);
+
+chart.select(".y.axis")
+	.selectAll("text")
+	.attr("transform", "translate(-15, 0)")
+
+}
+
+</script>
+
+<script>
+
+data = [];
+width = 3200;
+height = 600;
+nPoints = 10000;
+
+normal = d3.randomNormal(0, 0.25)
+uniform = d3.randomUniform()
+
+for (var i = 0; i < nPoints; ++i) {
+	x = uniform() * 2 * 3.1415 * 6
+	data.push({x: x, y: Math.cos(x) + normal()});
+}
+
+scatterXY(data, width, height)
+
+
+</script>
